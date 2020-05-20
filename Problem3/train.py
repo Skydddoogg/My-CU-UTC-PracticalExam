@@ -7,10 +7,12 @@ import os
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from config import BATCH_SIZE, MAX_EPOCHS
-from models import resnetV2
 from Problem3.utils import data_tools
+from Problem3.models import resnetV2, model_utils
 
 if __name__ == "__main__":
+
+    model_name = 'no_aug_resnetV2'
 
     X_train, X_test, X_valid, y_train, y_test, y_valid = data_tools.get_splitted_data(True)
     input_shape = (X_train.shape[1], X_train.shape[2], X_train.shape[3])
@@ -73,3 +75,20 @@ if __name__ == "__main__":
         callbacks=[EARLY_STOPPING],
         verbose=1
     )
+
+    # Evaluate
+    loss, accuracy = model.evaluate(X_test)
+
+    print('({0}) evaluating on test set: loss = {1:.2f}, acc = {2:.2f}'.format(model_name, loss, accuracy))
+
+    # Make prediction
+    y_prob = model.predict(X_test)
+    y_prob = np.reshape(y_prob, (y_prob.shape[0],))
+
+    y_pred = y_prob.copy()
+    y_pred[y_prob >= 0.5] = 1
+    y_pred[y_prob < 0.5] = 0
+
+    # Save results
+    model_utils.save_history(history, model_name)
+    data_tools.save_results(y_test, y_pred, y_prob, model_name)

@@ -3,7 +3,7 @@ sys.path.append("../")
 
 import numpy as np
 import os
-from Problem3.config_path import data_path
+from Problem3.config_path import data_path, result_path
 from sklearn.model_selection import train_test_split
 
 def get_splitted_data(validation = False):
@@ -27,3 +27,17 @@ def get_splitted_data(validation = False):
     print("Test samples: {0}".format(y_test.shape[0]))
 
     return X_train, X_test, y_train, y_test
+
+def save_results(y_true, y_pred, prob, specified_name):
+
+    if not os.path.isdir(result_path):
+        os.mkdir(result_path)
+
+    if not os.path.isdir(os.path.join(result_path, 'groundtruth')):
+        os.mkdir(result_path + '/groundtruth')
+        os.mkdir(result_path + '/prediction')
+        os.mkdir(result_path + '/probability')
+
+    np.save(os.path.join(result_path, 'groundtruth', specified_name + ".npy"), np.array(y_true))
+    np.save(os.path.join(result_path, 'prediction', specified_name + ".npy"), np.array(y_pred))
+    np.save(os.path.join(result_path, 'probability', specified_name + ".npy"), np.array(prob))
