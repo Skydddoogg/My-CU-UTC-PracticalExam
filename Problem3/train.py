@@ -76,7 +76,6 @@ if __name__ == "__main__":
     history = model.fit(
         train_batches,
         epochs=total_epochs,
-        initial_epoch=initial_epochs,
         validation_data=validation_batches,
     )
 
