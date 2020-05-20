@@ -40,6 +40,7 @@ if __name__ == "__main__":
     val = tf.data.Dataset.from_tensor_slices((X_valid, y_valid))
 
     if args.use_augment == 'yes':
+        print("Add augmentation")
         train_batches = (
             train
             .map(augment, num_parallel_calls=AUTOTUNE)
@@ -59,16 +60,13 @@ if __name__ == "__main__":
     )
 
     # Declare model
-    base_model = tf.keras.applications.ResNet50V2(input_shape=input_shape, include_top=False, weights='imagenet')
+    base_model = tf.keras.applications.MobileNetV2(input_shape=input_shape, include_top=False, weights='imagenet')
 
     base_model.trainable = True
 
     model = tf.keras.Sequential([
         base_model,
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Activation('relu'),
-        tf.keras.layers.AveragePooling2D(),
-        tf.keras.layers.Flatten(),
+        tf.keras.layers.GlobalAveragePooling2D(),
         tf.keras.layers.Dense(1, activation='sigmoid')
     ])
 
