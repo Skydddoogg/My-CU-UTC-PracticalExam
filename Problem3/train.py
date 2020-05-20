@@ -76,13 +76,9 @@ if __name__ == "__main__":
         loss=tf.keras.losses.BinaryCrossentropy(),
         metrics=METRICS)
 
-    initial_epochs = 10
-    fine_tune_epochs = 50
-    total_epochs =  initial_epochs + fine_tune_epochs
-
     history = model.fit(
         train_batches,
-        epochs=total_epochs,
+        epochs=MAX_EPOCHS,
         validation_data=validation_batches,
         callbacks=[EARLY_STOPPING],
     )
