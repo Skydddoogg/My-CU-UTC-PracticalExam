@@ -34,7 +34,7 @@ if __name__ == "__main__":
     )
 
     # Declare model
-    base_model = tf.keras.applications.MobileNetV2(input_shape=input_shape, include_top=False, weights='imagenet')
+    base_model = tf.keras.applications.ResNet50V2(input_shape=input_shape, include_top=False, weights='imagenet')
 
     base_model.trainable = True
 
@@ -56,6 +56,13 @@ if __name__ == "__main__":
         tf.keras.metrics.BinaryAccuracy(name="accuracy")
     ]
 
+    EARLY_STOPPING = tf.keras.callbacks.EarlyStopping(
+        monitor='val_loss',
+        verbose=0,
+        patience=10,
+        mode='min',
+        restore_best_weights=True)
+
     initial_learning_rate = 0.1
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
         initial_learning_rate,
@@ -70,13 +77,14 @@ if __name__ == "__main__":
         metrics=METRICS)
 
     initial_epochs = 10
-    fine_tune_epochs = 10
+    fine_tune_epochs = 50
     total_epochs =  initial_epochs + fine_tune_epochs
 
     history = model.fit(
         train_batches,
         epochs=total_epochs,
         validation_data=validation_batches,
+        callbacks=[EARLY_STOPPING],
     )
 
     # Evaluate
