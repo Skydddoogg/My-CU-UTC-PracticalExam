@@ -34,16 +34,17 @@ if __name__ == "__main__":
     )
 
     # Declare model
-    model = resnetV2.make_model(input_shape=input_shape)
+    base_model = tf.keras.applications.MobileNetV2(input_shape=input_shape, include_top=False, weights='imagenet')
+
+    base_model.trainable = True
+
+    model = tf.keras.Sequential([
+        base_model,
+        tf.keras.layers.GlobalAveragePooling2D(),
+        tf.keras.layers.Dense(1, activation='sigmoid')
+    ])
 
     # Declare useful varibles and functions
-    EARLY_STOPPING = tf.keras.callbacks.EarlyStopping(
-        monitor='loss',
-        verbose=0,
-        patience=10,
-        mode='min',
-        restore_best_weights=True)
-
     METRICS = [
         tf.keras.metrics.TruePositives(name='tp'),
         tf.keras.metrics.FalsePositives(name='fp'),
@@ -68,12 +69,15 @@ if __name__ == "__main__":
         loss=tf.keras.losses.BinaryCrossentropy(),
         metrics=METRICS)
 
+    initial_epochs = 10
+    fine_tune_epochs = 10
+    total_epochs =  initial_epochs + fine_tune_epochs
+
     history = model.fit(
         train_batches,
-        epochs=MAX_EPOCHS,
+        epochs=total_epochs,
+        initial_epoch=initial_epochs,
         validation_data=validation_batches,
-        callbacks=[EARLY_STOPPING],
-        verbose=1
     )
 
     # Evaluate
