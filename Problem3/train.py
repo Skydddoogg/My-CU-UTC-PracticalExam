@@ -65,8 +65,11 @@ if __name__ == "__main__":
 
     model = tf.keras.Sequential([
         base_model,
-        tf.keras.layers.GlobalAveragePooling2D(),
-        tf.keras.layers.Dense(1)
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.AveragePooling2D(),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(1, activation='sigmoid')
     ])
 
     # Declare useful varibles and functions
@@ -98,7 +101,7 @@ if __name__ == "__main__":
     # Train
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr_schedule),
-        loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+        loss=tf.keras.losses.BinaryCrossentropy(),
         metrics=METRICS)
 
     history = model.fit(
