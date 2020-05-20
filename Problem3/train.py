@@ -52,7 +52,7 @@ if __name__ == "__main__":
         tf.keras.metrics.Precision(name='precision'),
         tf.keras.metrics.Recall(name='recall'),
         tf.keras.metrics.AUC(name='auc'),
-        tf.keras.metrics.BinaryAccuracy(name="acc")
+        tf.keras.metrics.BinaryAccuracy(name="accuracy")
     ]
 
     initial_learning_rate = 0.1
@@ -77,9 +77,9 @@ if __name__ == "__main__":
     )
 
     # Evaluate
-    loss, accuracy = model.evaluate(X_test,  y_test, verbose=2)
-
-    print('({0}) evaluating on test set: loss = {1:.2f}, acc = {2:.2f}'.format(model_name, loss, accuracy))
+    results = model.evaluate(X_test, y_test, batch_size=BATCH_SIZE, verbose=0)
+    for name, value in zip(model.metrics_names, results):
+        print('({0}) evaluating on test set: {1} = {2:.2f}'.format(model_name, name, value))
 
     # Make prediction
     y_prob = model.predict(X_test)
