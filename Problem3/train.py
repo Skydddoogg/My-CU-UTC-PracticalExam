@@ -77,7 +77,7 @@ if __name__ == "__main__":
     )
 
     # Evaluate
-    loss, accuracy = model.evaluate(X_test)
+    loss, accuracy = model.evaluate(X_test,  y_test, verbose=2)
 
     print('({0}) evaluating on test set: loss = {1:.2f}, acc = {2:.2f}'.format(model_name, loss, accuracy))
 
