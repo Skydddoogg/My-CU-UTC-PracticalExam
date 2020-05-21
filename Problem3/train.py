@@ -27,6 +27,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--use_augment", default='no')
     parser.add_argument("--model_name")
+    parser.add_argument("--use_pretrained", default='no')
     args = parser.parse_args()
 
     model_name = args.model_name
@@ -60,7 +61,12 @@ if __name__ == "__main__":
     )
 
     # Declare model
-    base_model = tf.keras.applications.MobileNetV2(input_shape=input_shape, include_top=False, weights='imagenet')
+    if args.use_pretrained == 'yes':
+        weights = 'imagenet'
+    else:
+        weights = None
+
+    base_model = tf.keras.applications.MobileNetV2(input_shape=input_shape, include_top=False, weights=weights)
 
     base_model.trainable = True
 
@@ -104,9 +110,8 @@ if __name__ == "__main__":
 
     history = model.fit(
         train_batches,
-        epochs=MAX_EPOCHS,
+        epochs=100,
         validation_data=validation_batches,
-        callbacks=[EARLY_STOPPING],
     )
 
     # Evaluate
